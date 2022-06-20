@@ -2,3 +2,4 @@
 
 - [`hello`](./hello/)
 - [`home-manager-macos`](./home-manager-macos/)
+- [`npm`](./npm/)

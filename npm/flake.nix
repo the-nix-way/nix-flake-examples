@@ -14,14 +14,22 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         # Use a convenience variable for all nixpkgs packages for the specified system
-        let pkgs = nixpkgs.legacyPackages.${system}; in
-        {
-          packages = with pkgs; {
-            # Import the hello package
-            inherit node;
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
 
-            # Set the default package
-            default = node;
+          npm = {
+            type = "app";
+            program = "${pkgs.nodejs_latest}/bin/npm";
+          };
+        in {
+          apps = {
+            inherit npm;
+          };
+
+          defaultApp = npm;
+
+          devShell = pkgs.mkShell {
+            buildInputs = with pkgs; [ nodejs_latest ];
           };
         }
       );
