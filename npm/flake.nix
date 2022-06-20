@@ -15,7 +15,7 @@
       (system:
         # Use a convenience variable for all nixpkgs packages for the specified system
         let
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = import nixpkgs { inherit system; };
         in {
           devShell = pkgs.mkShell {
             inputsFrom = [

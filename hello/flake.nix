@@ -14,8 +14,9 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         # Use a convenience variable for all nixpkgs packages for the specified system
-        let pkgs = nixpkgs.legacyPackages.${system}; in
-        {
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in {
           packages = with pkgs; {
             # Import the hello package
             inherit hello;

@@ -15,11 +15,16 @@
     # Recurse through systems supported by flake-utils
     flake-utils.lib.eachDefaultSystem
       (system:
+        # Use a convenience variable for all nixpkgs packages for the specified system
         let
-           pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = import nixpkgs { inherit system; };
           cargoToml = (builtins.fromTOML (builtins.readFile ./Cargo.toml));
         in {
-          devShell =
-        };
+          devShell = pkgs.mkShell {
+            inputsFrom = [
+              "${cargoToml.package.name}"
+            ];
+          };
+        }
       );
 }

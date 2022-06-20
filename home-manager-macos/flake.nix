@@ -20,7 +20,7 @@
 
         homeDirectory = "/Users/${username}";
 
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs { inherit system; };
 
         configuration = { pkgs, ... }: {
           programs = {
