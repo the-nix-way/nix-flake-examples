@@ -9,7 +9,6 @@
     };
   };
 
-
   outputs = { self, nixpkgs, home-manager }:
     let
       username = "change-me";
