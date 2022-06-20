@@ -20,17 +20,17 @@
         pkgName = final.callPackage ./. { inherit naersk metadata; };
       };
       overlays = [ naerskOverlay ];
-    in flake-utils.lib.eachDefaultSystem (system:
+    in
+    flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
           inherit system overlays;
         };
 
-        libclang = pkgs.llvmPackages.libclang;
-
-        packages.pkgName = pkgs.pkgName;
-
-        defaultPackage = packages.pkgName;
+        packages = {
+          pkgName = pkgs.pkgName;
+          default = pkgs.pkgName;
+        };
 
         apps.pkgName = flake-utils.lib.mkApp {
           drv = packages.pkgName;
@@ -38,7 +38,7 @@
 
         defaultApp = apps.pkgName;
 
-        devShell = pkgs.mkShell {
+        devShells.default = pkgs.mkShell {
           inputsFrom = [
             pkgs.pkgName
           ];
@@ -46,8 +46,6 @@
             rustfmt
             nixpkgs-fmt
           ];
-
-          LIBCLANG_PATH = "${libclang.lib}/lib";
         };
 
         checks = {
@@ -55,15 +53,16 @@
             {
               buildInputs = with pkgs; [ rustfmt cargo ];
             } ''
-              ${pkgs.rustfmt}/bin/cargo-fmt fmt --manifest-path ${./.}/Cargo.toml -- --check
-              ${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt --check ${./.}
-              touch $out
-            '';
+            ${pkgs.rustfmt}/bin/cargo-fmt fmt --manifest-path ${./.}/Cargo.toml -- --check
+            ${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt --check ${./.}
+            touch $out
+          '';
 
           pkgName = pkgs.pkgName;
         };
-      in {
-        inherit packages defaultPackage apps defaultApp devShell checks;
+      in
+      {
+        inherit packages apps defaultApp devShells checks;
       }
     );
 }
