@@ -28,7 +28,7 @@
         };
 
         packages = {
-          pkgName = pkgs.pkgName;
+          inherit pkgName;
           default = pkgs.pkgName;
         };
 
