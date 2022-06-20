@@ -1,4 +1,4 @@
 # Nix flakes examples
 
 - [`hello`](./hello/)
-- [`home-manager`](./home-manager/)
+- [`home-manager-macos`](./home-manager-macos/)
