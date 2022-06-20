@@ -1,5 +1,6 @@
 # Home Manager with a Nix flake
 
 ```shell
-nix build --no-link .#homeConfigurations.jdoe.activationPackage
+nix build .#homeConfigurations.change-me.activationPackage
+./result/bin/home-manager-generation
 ```

@@ -1,27 +1,42 @@
 {
-  description = "Home Manager configuration for macOS";
+  description = "Home manager configurations";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { home-manager, ... }:
+
+  outputs = { self, nixpkgs, home-manager }:
     let
-      system = "aarch64-darwin";
       username = "change-me";
+      system = "aarch64-darwin";
+      stateVersion = "22.05";
     in {
       homeConfigurations.${username} = home-manager.lib.homeManagerConfiguration {
-        # Specify the path to your home configuration here
-        configuration = {};
+        inherit stateVersion system username;
 
-        inherit system username;
-        homeDirectory = "/home/${username}";
-        stateVersion = "22.05";
+        homeDirectory = "/Users/${username}";
+
+        pkgs = nixpkgs.legacyPackages.${system};
+
+        configuration = { pkgs, ... }: {
+          programs = {
+            home-manager = {
+              enable = true;
+            };
+          };
+
+          home = {
+            packages = import ./packages.nix { inherit pkgs; };
+            sessionVariables = {
+              WELCOME = "Welcome to your flake-driven Home Manager config";
+            };
+          };
+        };
       };
     };
 }
