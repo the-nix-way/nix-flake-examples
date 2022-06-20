@@ -17,14 +17,10 @@
         let
           pkgs = import nixpkgs { inherit system; };
         in {
-          devShell = {
-            packages = with pkgs; {
-              # Import the hello package
-              inherit hello;
-
-              # Set the default package
-              default = hello;
-            };
+          devShell = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              hello
+            ];
           };
         }
       );
