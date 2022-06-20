@@ -1,3 +1,3 @@
 # Nix flakes examples
 
-- [`simple`](./simple)
+- [`hello`](./hello/)
