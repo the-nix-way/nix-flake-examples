@@ -1,5 +1,5 @@
 {
-  description = "A flake with just the hello package";
+  description = "A Nix flake with just the hello package";
 
   # GitHub URLs for the Nix inputs we're using
   inputs = {
