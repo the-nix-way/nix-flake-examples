@@ -1,5 +1,5 @@
 # Nix Flakes examples
 
-- [Simple]
-
-[simple]: ./simple
+| Directory           | Content |
+| :------------------ | :------ |
+| [`hello`](./hello/) |
