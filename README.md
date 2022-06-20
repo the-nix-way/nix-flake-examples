@@ -1,5 +1,3 @@
-# Nix Flakes examples
+# Nix flakes examples
 
-| Directory           | Content |
-| :------------------ | :------ |
-| [`hello`](./hello/) |
+- [`simple`](./simple)
