@@ -12,19 +12,58 @@
   };
 
   outputs = { self, nixpkgs, flake-utils, naersk }:
-    # Recurse through systems supported by flake-utils
-    flake-utils.lib.eachDefaultSystem
-      (system:
-        # Use a convenience variable for all nixpkgs packages for the specified system
-        let
-          pkgs = import nixpkgs { inherit system; };
-          cargoToml = (builtins.fromTOML (builtins.readFile ./Cargo.toml));
-        in {
-          devShell = pkgs.mkShell {
-            inputsFrom = [
-              "${cargoToml.package.name}"
-            ];
-          };
-        }
-      );
+    let
+      cargoToml = (builtins.fromTOML (builtins.readFile ./Cargo.toml));
+      metadata = cargoToml.package;
+      pkgName = metadata.name;
+      naerskOverlay = final: prev: {
+        pkgName = final.callPackage ./. { inherit naersk metadata; };
+      };
+      overlays = [ naerskOverlay ];
+    in flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system overlays;
+        };
+
+        libclang = pkgs.llvmPackages.libclang;
+
+        packages.pkgName = pkgs.pkgName;
+
+        defaultPackage = packages.pkgName;
+
+        apps.pkgName = flake-utils.lib.mkApp {
+          drv = packages.pkgName;
+        };
+
+        defaultApp = apps.pkgName;
+
+        devShell = pkgs.mkShell {
+          inputsFrom = [
+            pkgs.pkgName
+          ];
+          buildInputs = with pkgs; [
+            rustfmt
+            nixpkgs-fmt
+          ];
+
+          LIBCLANG_PATH = "${libclang.lib}/lib";
+        };
+
+        checks = {
+          format = pkgs.runCommand "check-format"
+            {
+              buildInputs = with pkgs; [ rustfmt cargo ];
+            } ''
+              ${pkgs.rustfmt}/bin/cargo-fmt fmt --manifest-path ${./.}/Cargo.toml -- --check
+              ${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt --check ${./.}
+              touch $out
+            '';
+
+          pkgName = pkgs.pkgName;
+        };
+      in {
+        inherit packages defaultPackage apps defaultApp devShell checks;
+      }
+    );
 }
