@@ -6,6 +6,21 @@ Open up a shell:
 nix develop .
 ```
 
-**Note**: this flake doesn't convert the Rust dependencies into Nix dependencies. It just provides a "pure" Nix environment for using [Cargo].
+Once inside the shell, you can run standard [Cargo] commands:
+
+```shell
+# Run the main.rs executable
+cargo run
+
+# Build and run
+cargo build
+./target/debug/nix-flakes-rust
+
+# Build and run a release
+cargo build --release
+./target/release/nix-flakes-rust
+```
+
+> **Note**: this flake doesn't convert the Rust dependencies into Nix dependencies. It just provides a "pure" Nix environment for using [Cargo].
 
 [cargo]: https://cargo.rs
