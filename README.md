@@ -1,7 +1,8 @@
 # Nix flakes examples
 
 - [`hello`](./hello/)
-- [`rust`](./rust/)
+- [`npm`](./npm/)
+- [`rust-shell`](./rust-shell/)
 - [`shell`](./shell/)
 
 ## GitPod browser environment
