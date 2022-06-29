@@ -19,6 +19,7 @@
         in {
           devShell = pkgs.mkShell {
             buildInputs = with pkgs; [
+              cowsay
               hello
             ];
           };

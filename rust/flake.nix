@@ -7,62 +7,23 @@
     nixpkgs.url = "github:NixOS/nixpkgs";
     # flake-utils is a set of helper functions for using flakes
     flake-utils.url = "github:numtide/flake-utils";
-    # Naersk is a utility library for working with Rust
-    naersk.url = "github:nmattia/naersk";
+    # A utility library for working with Rust
+    rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
-  outputs = { self, nixpkgs, flake-utils, naersk }:
-    let
-      cargoToml = (builtins.fromTOML (builtins.readFile ./Cargo.toml));
-      metadata = cargoToml.package;
-      pkgName = metadata.name;
-      naerskOverlay = final: prev: {
-        pkgName = final.callPackage ./. { inherit naersk metadata; };
-      };
-      overlays = [ naerskOverlay ];
-    in
+  outputs = { self, nixpkgs, flake-utils, rust-overlay }:
     flake-utils.lib.eachDefaultSystem (system:
       let
+        overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
-
-        packages = {
-          inherit pkgName;
-          default = pkgs.pkgName;
-        };
-
-        apps.pkgName = flake-utils.lib.mkApp {
-          drv = packages.pkgName;
-        };
-
-        defaultApp = apps.pkgName;
-
+      in {
         devShells.default = pkgs.mkShell {
-          inputsFrom = [
-            pkgs.pkgName
-          ];
           buildInputs = with pkgs; [
-            rustfmt
-            nixpkgs-fmt
+            (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
           ];
         };
-
-        checks = {
-          format = pkgs.runCommand "check-format"
-            {
-              buildInputs = with pkgs; [ rustfmt cargo ];
-            } ''
-            ${pkgs.rustfmt}/bin/cargo-fmt fmt --manifest-path ${./.}/Cargo.toml -- --check
-            ${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt --check ${./.}
-            touch $out
-          '';
-
-          pkgName = pkgs.pkgName;
-        };
-      in
-      {
-        inherit packages apps defaultApp devShells checks;
       }
     );
 }
