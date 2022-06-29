@@ -1,4 +1,4 @@
-# Nix flakes Rust example
+# Rust development environment
 
 Open up a shell:
 

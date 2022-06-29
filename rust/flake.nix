@@ -15,22 +15,29 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [
+          # This overlay adds the "rust-bin" package to nixpkgs
           (import rust-overlay)
         ];
 
+        # System-specific nixpkgs with rust-overlay applied
         pkgs = import nixpkgs {
           inherit system overlays;
         };
 
+        # The shell environment
         devShells = {
           default = pkgs.mkShell {
             buildInputs = with pkgs; [
+              # Use the specific version of the Rust toolchain specified by the toolchain file
               (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
+
+              # Other utilities
+              openssl
+              exa
+              fd
             ];
 
-            shellHook = ''
-              rm -rf target
-            '';
+            shellHook = builtins.readFile ./scripts/shell.sh;
           };
         };
       in {
