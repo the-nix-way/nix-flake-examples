@@ -14,16 +14,27 @@
   outputs = { self, nixpkgs, flake-utils, rust-overlay }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        overlays = [ (import rust-overlay) ];
+        overlays = [
+          (import rust-overlay)
+        ];
+
         pkgs = import nixpkgs {
           inherit system overlays;
         };
-      in {
-        devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
-          ];
+
+        devShells = {
+          default = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
+            ];
+
+            shellHook = ''
+              rm -rf target
+            '';
+          };
         };
+      in {
+        inherit devShells;        
       }
     );
 }
