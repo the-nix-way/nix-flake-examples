@@ -13,7 +13,7 @@
     # Recurse through systems supported by flake-utils
     flake-utils.lib.eachDefaultSystem
       (system:
-        # Use a convenience variable for all nixpkgs packages for the specified system
+        # Use a convenience variable for all Nixpkgs packages for the specified system
         let
           pkgs = import nixpkgs { inherit system; };
         in {
