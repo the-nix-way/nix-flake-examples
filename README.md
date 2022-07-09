@@ -1,5 +1,6 @@
 # Nix flake examples
 
+- [`docker-image`](./docker-image/)
 - [`hello`](./hello/)
 - [`npm`](./npm/)
 - [`rust-shell`](./rust-shell/)
