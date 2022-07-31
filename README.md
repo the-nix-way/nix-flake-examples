@@ -1,5 +1,7 @@
 # Nix flake examples
 
+[![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
+
 - [`docker-image`](./docker-image/)
 - [`hello`](./hello/)
 - [`npm`](./npm/)
